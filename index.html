@@ -1,395 +1,305 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suuq.DJ — Marketplace N°1 à Djibouti</title>
-<meta name="description" content="Suuq.DJ — La première marketplace djiboutienne. Achetez, vendez, échangez voitures, immobilier, électronique, mode et bien plus à Djibouti. Gratuit !">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Suuq.DJ — Marketplace de Djibouti</title>
+<meta name="description" content="Suuq.DJ — Achetez et vendez à Djibouti. Voitures, immobilier, électronique, mode et bien plus.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --primary:#E8401A;--primary-dark:#C43010;
-  --gold:#F5A623;--gold-light:#FFD580;
-  --dark:#1A1208;--dark2:#2D2010;
-  --surface:#FFFAF5;--surface2:#FFF3E8;
-  --text:#1A1208;--text2:#5C4A2A;--text3:#9A8060;
-  --border:#E8D5B8;--border2:#F0E0C8;
-  --success:#2E7D32;--white:#fff;--wa:#25D366;
+  --green:#1a7a4a;--green-dark:#145e38;--green-light:#e8f5ee;--green-mid:#2d9e60;
+  --accent:#ff5722;--accent-light:#fff3f0;
+  --text:#1c1c1c;--text2:#555;--text3:#999;
+  --bg:#f7f8fa;--white:#fff;
+  --border:#e8e8e8;--border2:#f0f0f0;
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+  --shadow2:0 4px 20px rgba(0,0,0,.1);
+  --radius:10px;--radius2:14px;
+  --wa:#25D366;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);overflow-x:hidden;line-height:1.5;-webkit-text-size-adjust:100%}
-a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
-button{cursor:pointer;font-family:'Outfit',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-input,select,textarea{font-family:'Outfit',sans-serif;-webkit-appearance:none}
-select{-webkit-appearance:auto}
-input[type=number]{-moz-appearance:textfield}
-input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.5;font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Inter',sans-serif;border:none;outline:none}
+input,select,textarea{font-family:'Inter',sans-serif;outline:none}
+img{max-width:100%}
 
-/* ======= HEADER TOP ======= */
-.header-top{background:var(--primary);padding:5px 16px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.95)}
-.header-top-links{display:flex;gap:14px}
-.header-top-links a{color:rgba(255,255,255,.85);cursor:pointer;transition:color .2s}
-.header-top-links a:hover{color:#fff;text-decoration:underline}
+/* ── TOPBAR ── */
+.topbar{background:var(--green);padding:6px 20px;display:flex;justify-content:space-between;align-items:center}
+.topbar-left{font-size:12px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:6px}
+.topbar-right{display:flex;gap:18px}
+.topbar-right a{font-size:12px;color:rgba(255,255,255,.8);cursor:pointer;transition:color .2s}
+.topbar-right a:hover{color:#fff}
 
-/* ======= HEADER ======= */
-.header-wrap{background:var(--dark);position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.5)}
-.header-main{max-width:1400px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.logo-icon{width:40px;height:40px;background:var(--primary);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif}
-.logo-text{font-size:24px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif;letter-spacing:-.5px}
-.logo-text span{color:var(--gold)}
-.search-bar{flex:1;display:flex;background:#fff;border-radius:9px;overflow:hidden;border:2px solid var(--gold);min-width:0}
-.search-bar input{flex:1;padding:9px 14px;border:none;outline:none;font-size:14px;color:var(--text);min-width:0}
-.search-bar select{padding:7px 10px;border:none;border-left:1px solid var(--border);outline:none;font-size:12px;color:var(--text2);background:#FFF8F0}
-.search-btn{padding:9px 16px;background:var(--primary);color:#fff;border:none;font-weight:600;font-size:14px;transition:background .2s;white-space:nowrap}
-.search-btn:hover{background:var(--primary-dark)}
-.header-actions{display:flex;gap:8px;flex-shrink:0}
-.btn-login{background:transparent;color:#fff;padding:8px 14px;border-radius:8px;font-weight:500;font-size:13px;border:1px solid rgba(255,255,255,.3);transition:all .2s}
-.btn-login:hover{background:rgba(255,255,255,.1)}
-.btn-post{background:var(--gold);color:var(--dark);padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;border:none;transition:all .2s}
-.btn-post:hover{background:var(--gold-light);transform:translateY(-1px)}
+/* ── HEADER ── */
+.header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:var(--shadow)}
+.header-inner{max-width:1300px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
+.logo-mark{width:38px;height:38px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;font-family:"Tajawal",sans-serif}
+.logo-mark svg{width:22px;height:22px;fill:#fff}
+.logo-name{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;color:var(--green);letter-spacing:-.5px}
+.logo-name span{color:var(--accent)}
+.search-wrap{flex:1;max-width:580px;display:flex;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border .2s}
+.search-wrap:focus-within{border-color:var(--green)}
+.search-wrap input{flex:1;padding:10px 14px;background:transparent;border:none;font-size:14px;color:var(--text)}
+.search-wrap select{padding:0 12px;border:none;border-left:1px solid var(--border);font-size:13px;color:var(--text2);background:var(--white);cursor:pointer}
+.search-btn{padding:10px 20px;background:var(--green);color:#fff;font-weight:600;font-size:14px;transition:background .2s;white-space:nowrap}
+.search-btn:hover{background:var(--green-dark)}
+.header-actions{display:flex;gap:10px;flex-shrink:0;margin-left:auto}
+.btn-sell{background:var(--accent);color:#fff;padding:9px 18px;border-radius:var(--radius);font-weight:600;font-size:14px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-sell:hover{background:#e64a19;transform:translateY(-1px)}
+.btn-login{background:transparent;color:var(--green);padding:9px 16px;border-radius:var(--radius);font-weight:600;font-size:14px;border:1.5px solid var(--green);transition:all .2s}
+.btn-login:hover{background:var(--green-light)}
 
-/* ======= FREE BANNER ======= */
-.free-banner{background:linear-gradient(90deg,#166010,#228B22,#166010);padding:9px 16px;text-align:center;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.free-tag{background:rgba(255,255,255,.25);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700}
+/* ── NAV CATS ── */
+.nav-cats{background:var(--white);border-bottom:1px solid var(--border)}
+.nav-cats-inner{max-width:1300px;margin:0 auto;padding:0 20px;display:flex;overflow-x:auto;scrollbar-width:none;gap:0}
+.nav-cats-inner::-webkit-scrollbar{display:none}
+.nav-cat{display:flex;align-items:center;gap:6px;padding:12px 16px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;user-select:none}
+.nav-cat:hover,.nav-cat.active{color:var(--green);border-bottom-color:var(--green)}
 
-/* ======= NAV ======= */
-nav{background:var(--dark2);border-bottom:3px solid var(--primary)}
-.nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;overflow-x:auto;scrollbar-width:none}
-.nav-inner::-webkit-scrollbar{display:none}
-.nav-item{display:flex;align-items:center;gap:5px;padding:10px 14px;color:rgba(255,255,255,.75);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-3px;user-select:none}
-.nav-item:hover,.nav-item.active{color:#fff;border-bottom-color:var(--gold)}
+/* ── MAIN ── */
+.main{max-width:1300px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:240px 1fr;gap:24px}
 
-/* ======= HERO AD ======= */
-.hero-ad{background:linear-gradient(135deg,#1A1208,#3D2010,#1A1208);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;border-bottom:2px solid var(--gold)}
-.ad-pub-tag{background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
-.hero-ad-text h2{font-size:15px;font-weight:800;color:#fff;font-family:'Tajawal',sans-serif}
-.hero-ad-text h2 span{color:var(--gold)}
-.hero-ad-text p{font-size:11px;color:rgba(255,255,255,.6)}
-.btn-hero-ad{background:var(--gold);color:var(--dark);padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;border:none;flex-shrink:0;transition:all .2s;white-space:nowrap}
-.btn-hero-ad:hover{background:var(--gold-light)}
-
-/* ======= LAYOUT ======= */
-.main-layout{max-width:1400px;margin:0 auto;padding:16px;display:grid;grid-template-columns:220px 1fr 200px;gap:18px}
-
-/* ======= SIDEBAR ======= */
-.sidebar-box{background:var(--white);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:14px}
-.sidebar-title{background:var(--primary);color:#fff;padding:10px 14px;font-size:13px;font-weight:700}
-.sidebar-title.gold{background:var(--gold);color:var(--dark)}
-.cat-item{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:1px solid var(--border2);transition:all .15s;user-select:none}
-.cat-item:last-child{border-bottom:none}
-.cat-item:hover{background:var(--surface2);color:var(--primary)}
-.cat-left{display:flex;align-items:center;gap:8px}
-.cat-count{background:var(--surface2);color:var(--text3);font-size:11px;padding:2px 7px;border-radius:10px;font-weight:600;transition:all .15s}
-.cat-item:hover .cat-count{background:var(--primary);color:#fff}
-.sidebar-ad{background:var(--dark);border-radius:12px;overflow:hidden;border:2px solid var(--gold);margin-bottom:14px}
-.sad-top{background:var(--gold);padding:5px 10px;font-size:10px;font-weight:700;color:var(--dark);text-align:center;letter-spacing:1px}
-.sad-top.red{background:var(--primary);color:#fff}
-.sad-body{padding:14px;text-align:center}
-.sad-emoji{font-size:32px;display:block;margin-bottom:7px}
-.sad-body h3{font-size:14px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;margin-bottom:4px}
-.sad-body p{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.5}
-.btn-sad{background:var(--primary);color:#fff;border:none;padding:8px 0;border-radius:6px;font-size:12px;font-weight:600;width:100%;transition:background .2s}
-.btn-sad:hover{background:var(--primary-dark)}
-.btn-sad.gold{background:var(--gold);color:var(--dark)}
-.btn-sad.gold:hover{background:var(--gold-light)}
-.price-inputs{padding:12px}
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:16px}
+.sbox{background:var(--white);border-radius:var(--radius2);border:1px solid var(--border);overflow:hidden}
+.sbox-title{padding:14px 16px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:8px}
+.scat{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:1px solid var(--border2);transition:all .15s}
+.scat:last-child{border-bottom:none}
+.scat:hover{background:var(--green-light);color:var(--green)}
+.scat-left{display:flex;align-items:center;gap:9px}
+.scat-n{font-size:11px;color:var(--text3);font-weight:500}
+.scat:hover .scat-n{color:var(--green)}
+.price-wrap{padding:14px 16px}
 .price-row{display:flex;gap:8px;margin-bottom:10px}
-.price-input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;transition:border .2s}
-.price-input:focus{border-color:var(--primary)}
-.btn-filter{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700}
-.btn-filter:hover{background:var(--primary-dark)}
+.pinput{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);transition:border .2s}
+.pinput:focus{border-color:var(--green)}
+.btn-filter{width:100%;padding:9px;background:var(--green);color:#fff;border-radius:8px;font-size:13px;font-weight:600;transition:background .2s}
+.btn-filter:hover{background:var(--green-dark)}
 
-/* ======= CONTENT ======= */
-.content{display:flex;flex-direction:column;gap:20px}
+/* ── CONTENT ── */
+.content{display:flex;flex-direction:column;gap:22px}
 
-/* ======= CATS PILLS ======= */
-.cats-bar{background:var(--white);border:1px solid var(--border2);border-radius:12px;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
-.cats-bar::-webkit-scrollbar{display:none}
-.cat-pill{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 12px;border-radius:10px;border:1px solid var(--border2);cursor:pointer;transition:all .2s;flex-shrink:0;background:var(--surface);user-select:none}
-.cat-pill:hover,.cat-pill.active{background:var(--primary);border-color:var(--primary);transform:translateY(-2px)}
-.pill-emoji{font-size:18px}
-.pill-label{font-size:11px;font-weight:600;color:var(--text2)}
-.cat-pill:hover .pill-label,.cat-pill.active .pill-label{color:#fff}
+/* ── HERO SEARCH PILLS ── */
+.pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.pills::-webkit-scrollbar{display:none}
+.pill{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.pill:hover,.pill.active{background:var(--green);border-color:var(--green);color:#fff}
 
-/* ======= SECTION HEADER ======= */
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.section-title{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
-.title-dot{width:7px;height:7px;background:var(--primary);border-radius:50%;flex-shrink:0}
-.see-all{font-size:12px;color:var(--primary);cursor:pointer;font-weight:500}
-.see-all:hover{text-decoration:underline}
+/* ── SECTION ── */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-size:17px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.sec-bar{width:3px;height:18px;background:var(--green);border-radius:2px}
+.sec-link{font-size:13px;color:var(--green);font-weight:500;cursor:pointer}
+.sec-link:hover{text-decoration:underline}
 
-/* ======= LISTING GRID ======= */
-.listing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.listing-card{background:var(--white);border:1px solid var(--border2);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
-.listing-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,64,26,.12);border-color:var(--primary)}
-.listing-card.featured{border:2px solid var(--gold)}
-.card-badges{position:absolute;top:8px;left:8px;z-index:2;display:flex;gap:4px;flex-wrap:wrap}
-.badge{font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;letter-spacing:.3px}
-.badge.top{background:var(--primary);color:#fff}
-.badge.new{background:var(--success);color:#fff}
-.badge.hot{background:#FF6B00;color:#fff}
-.badge.urgent{background:#8B0000;color:#fff}
-.card-img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,#F0E0C8,#E8D0B0)}
-.card-body{padding:9px 11px 11px}
-.card-price{font-size:16px;font-weight:700;color:var(--primary)}
-.card-price .cur{font-size:11px;font-weight:500;color:var(--text3)}
-.card-title{font-size:12px;font-weight:600;color:var(--text);margin:3px 0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-loc{font-size:11px;color:var(--text3)}
-.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:7px;padding-top:7px;border-top:1px solid var(--border2)}
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius2);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:all .22s;position:relative}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow2);border-color:#ccc}
+.card-img{width:100%;height:160px;object-fit:cover;background:linear-gradient(135deg,#e8f0e8,#d0e0d0);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
+.card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.card-badges{position:absolute;top:10px;left:10px;display:flex;gap:4px;flex-wrap:wrap;z-index:2}
+.cbadge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.3px}
+.cbadge.boost{background:var(--accent);color:#fff}
+.cbadge.new{background:#1565c0;color:#fff}
+.cbadge.pro{background:var(--green);color:#fff}
+.card-body{padding:12px 14px}
+.card-price{font-size:17px;font-weight:700;color:var(--green);margin-bottom:3px}
+.card-price .neg{font-size:13px;font-weight:500;color:var(--text3)}
+.card-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border2)}
 .card-time{font-size:11px;color:var(--text3)}
-.card-fav{width:26px;height:26px;background:var(--surface2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:none;transition:all .2s}
-.card-fav:hover{background:var(--primary)}
+.fav-btn{width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;border:1px solid var(--border)}
+.fav-btn:hover{background:var(--accent);border-color:var(--accent)}
 
-/* ======= AD CARD IN GRID ======= */
-.listing-card.ad-card{background:linear-gradient(135deg,var(--dark),#3D2010);border:2px solid var(--gold)}
-.ad-card-inner{padding:18px 14px;min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-.ad-card-tag{background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;letter-spacing:1px;margin-bottom:9px}
-.ad-card-emoji{font-size:34px;margin-bottom:7px}
-.ad-card-inner h3{font-size:14px;font-weight:800;color:#fff;font-family:'Tajawal',sans-serif;margin-bottom:5px}
-.ad-card-inner p{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.4}
-.btn-ad-card{background:var(--gold);color:var(--dark);border:none;padding:7px 16px;border-radius:7px;font-size:12px;font-weight:700;transition:background .2s}
-.btn-ad-card:hover{background:var(--gold-light)}
+/* ── EMPTY / LOADING ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:52px;margin-bottom:14px}
+.empty p{font-size:14px;line-height:1.6}
+.skel{background:var(--border2);border-radius:var(--radius2);height:240px;animation:pulse 1.4s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
 
-/* ======= PROMO BANNER ======= */
-.promo-banner{background:linear-gradient(135deg,#2D1A08,#5C3010,#2D1A08);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border:1px solid var(--gold)}
-.promo-left h3{font-size:16px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif}
-.promo-left h3 span{color:var(--gold)}
-.promo-left p{font-size:12px;color:rgba(255,255,255,.65);margin-top:3px}
-.promo-stats{display:flex;gap:16px;flex-shrink:0}
-.promo-stat .num{font-size:20px;font-weight:900;color:var(--gold);display:block}
-.promo-stat .lbl{font-size:11px;color:rgba(255,255,255,.55)}
-.btn-boost{background:var(--primary);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;flex-shrink:0;transition:all .2s}
-.btn-boost:hover{background:var(--primary-dark);transform:translateY(-1px)}
+/* ── BOOST BANNER ── */
+.boost-banner{background:var(--white);border:1px solid var(--border);border-radius:var(--radius2);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.bb-left h3{font-size:17px;font-weight:700;color:var(--text)}
+.bb-left p{font-size:13px;color:var(--text2);margin-top:4px}
+.bb-stats{display:flex;gap:24px}
+.bb-stat .n{font-size:22px;font-weight:800;color:var(--green);display:block}
+.bb-stat .l{font-size:11px;color:var(--text3)}
+.btn-boost{background:var(--green);color:#fff;padding:11px 24px;border-radius:var(--radius);font-weight:700;font-size:14px;transition:all .2s;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn-boost:hover{background:var(--green-dark);transform:translateY(-1px)}
 
-/* ======= RIGHT SIDEBAR ======= */
-.right-box{background:var(--white);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:14px}
-.right-box-title{padding:10px 14px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border2)}
-.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid var(--border2);font-size:12px}
-.stat-row:last-child{border-bottom:none}
-.stat-row .lbl{color:var(--text2)}
-.stat-row .val{font-weight:700;color:var(--primary)}
-.right-ad{background:var(--dark);border-radius:12px;overflow:hidden;border:2px solid var(--primary);margin-bottom:14px}
-.rad-top{background:var(--primary);padding:7px 12px;font-size:10px;font-weight:700;color:#fff;text-align:center;letter-spacing:1px}
-.rad-top.gold{background:var(--gold);color:var(--dark)}
-.rad-body{padding:14px;text-align:center}
-.rad-emoji{font-size:34px;display:block;margin-bottom:7px}
-.rad-body h3{font-size:13px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;margin-bottom:3px}
-.rad-body p{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.4}
-.btn-rad{background:var(--gold);color:var(--dark);border:none;padding:8px 0;border-radius:7px;font-size:12px;font-weight:700;width:100%;transition:background .2s}
-.btn-rad:hover{background:var(--gold-light)}
-.tags-wrap{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px}
-.pop-tag{background:var(--surface2);color:var(--text2);padding:4px 10px;border-radius:15px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
-.pop-tag:hover{background:var(--primary);color:#fff}
-.alert-box{padding:12px}
-.alert-box p{font-size:12px;color:var(--text2);margin-bottom:9px;line-height:1.5}
-.alert-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;margin-bottom:8px;transition:border .2s}
-.alert-input:focus{border-color:var(--primary)}
-.btn-alert{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;transition:background .2s}
-.btn-alert:hover{background:var(--primary-dark)}
+/* ── FOOTER ── */
+footer{background:var(--text);margin-top:48px;padding:40px 20px 20px}
+.footer-inner{max-width:1300px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:28px}
+.footer-logo{font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;color:#fff;margin-bottom:10px}
+.footer-logo span{color:var(--accent)}
+.footer-desc{font-size:12px;color:rgba(255,255,255,.4);line-height:1.8}
+.footer-col h4{font-size:13px;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:12px}
+.footer-col a{display:block;font-size:12px;color:rgba(255,255,255,.4);margin-bottom:8px;cursor:pointer;transition:color .2s}
+.footer-col a:hover{color:rgba(255,255,255,.8)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p{font-size:11px;color:rgba(255,255,255,.25)}
+.footer-wa{font-size:11px;color:var(--wa);font-weight:600}
 
-/* ======= FOOTER ======= */
-footer{background:var(--dark);margin-top:36px;padding:32px 16px 16px}
-.footer-inner{max-width:1400px;margin:0 auto}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px;margin-bottom:24px}
-.footer-brand-name{font-size:26px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif}
-.footer-brand-name span{color:var(--gold)}
-.footer-brand p{font-size:12px;color:rgba(255,255,255,.4);margin-top:8px;line-height:1.7}
-.footer-apps{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
-.app-btn{background:rgba(255,255,255,.1);padding:6px 12px;border-radius:6px;font-size:11px;color:rgba(255,255,255,.6);cursor:pointer;border:none;transition:all .2s}
-.app-btn:hover{background:rgba(255,255,255,.2);color:#fff}
-.footer-col h4{font-size:13px;font-weight:700;color:rgba(255,255,255,.8);margin-bottom:10px}
-.footer-col ul{list-style:none}
-.footer-col ul li{margin-bottom:7px}
-.footer-col ul li a{font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:color .2s}
-.footer-col ul li a:hover{color:var(--gold)}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.footer-bottom p{font-size:11px;color:rgba(255,255,255,.3)}
-.footer-monetize{font-size:11px;color:var(--gold);font-weight:600}
+/* ── WA FLOAT ── */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--wa);color:#fff;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);transition:all .2s;cursor:pointer}
+.wa-float:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.65)}
+.wa-float svg{width:26px;height:26px;fill:#fff}
+@keyframes pulse-wa{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}60%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}
+.wa-float{animation:pulse-wa 2.5s infinite}
 
-/* ======= WHATSAPP BUTTON ======= */
-.wa-float{position:fixed;bottom:20px;right:20px;z-index:500;background:var(--wa);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.5);border:none;transition:all .2s;text-decoration:none}
-.wa-float:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.7)}
-.wa-pulse{animation:waPulse 2s infinite}
-@keyframes waPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}50%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}
+/* ── MODALS ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.overlay.open{display:flex}
+.mbox{background:var(--white);border-radius:var(--radius2);padding:28px;width:100%;margin:auto;animation:mup .28s ease}
+@keyframes mup{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mbox.sm{max-width:460px}
+.mbox.md{max-width:520px}
+.m-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.m-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+.m-close{position:absolute;top:16px;right:16px;background:var(--bg);border:1px solid var(--border);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text2)}
+.m-close:hover{background:var(--border)}
 
-/* ======= MODAL ======= */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;padding:16px}
-.modal-overlay.show{display:flex}
-.modal{background:var(--white);border-radius:16px;padding:24px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease}
-@keyframes fadeUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal h2{font-size:19px;font-weight:800;color:var(--text);margin-bottom:5px}
-.modal-sub{font-size:13px;color:var(--text2);margin-bottom:18px}
-.modal-free-note{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px 14px;font-size:12px;color:#1b5e20;margin-bottom:16px;font-weight:500;line-height:1.5}
-.plan-card{border:2px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px;cursor:pointer;transition:all .2s;user-select:none;position:relative}
-.plan-card:hover,.plan-card.selected{border-color:var(--primary);background:var(--surface2)}
-.plan-card.recommended::before{content:'⭐ RECOMMANDÉ';position:absolute;top:-10px;right:10px;background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.5px}
-.plan-card h3{font-size:13px;font-weight:700;color:var(--text)}
-.plan-price{font-size:18px;font-weight:800;color:var(--primary);margin:3px 0}
-.plan-card p{font-size:11px;color:var(--text3);margin:0;line-height:1.4}
-.wa-pay-btn{width:100%;padding:13px;background:var(--wa);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;transition:all .2s}
-.wa-pay-btn:hover{background:#1da851;transform:translateY(-1px)}
-.wa-pay-btn svg{flex-shrink:0}
-.modal-cancel{width:100%;padding:10px;background:#f5f5f5;border:none;border-radius:8px;font-weight:600;font-size:14px;margin-top:8px;transition:background .2s}
-.modal-cancel:hover{background:#e8e8e8}
+/* BOOST PLANS */
+.plan{border:2px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
+.plan:hover,.plan.sel{border-color:var(--green);background:var(--green-light)}
+.plan.rec::after{content:'Populaire';position:absolute;top:-10px;right:12px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:5px}
+.plan-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.plan-price{font-size:19px;font-weight:800;color:var(--green)}
+.plan-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.btn-wa-pay{width:100%;padding:13px;background:var(--wa);color:#fff;border-radius:var(--radius);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;transition:all .2s}
+.btn-wa-pay:hover{background:#1da851;transform:translateY(-1px)}
+.btn-cancel{width:100%;padding:10px;background:var(--bg);color:var(--text2);border-radius:var(--radius);font-weight:500;font-size:14px;margin-top:8px;border:1px solid var(--border);transition:background .2s}
+.btn-cancel:hover{background:var(--border2)}
 
-/* ======= PUBLISH MODAL ======= */
-.pub-modal{background:var(--white);border-radius:16px;padding:24px;max-width:500px;width:100%;max-height:92vh;overflow-y:auto;animation:fadeUp .3s ease}
-.pub-modal h2{font-size:18px;font-weight:800;margin-bottom:4px}
-.free-badge-modal{display:inline-block;background:#e8f5e9;color:#1b5e20;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:14px;border:1px solid #a5d6a7}
-.form-group{margin-bottom:13px}
-.form-label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px}
-.form-input,.form-select,.form-textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .2s;background:#fff;color:var(--text)}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary)}
-.form-textarea{height:90px;resize:vertical}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.boost-option{border:2px solid var(--border2);border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;user-select:none;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px}
-.boost-option:hover,.boost-option.selected{border-color:var(--gold);background:var(--surface2)}
-.boost-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s}
-.boost-option.selected .boost-check{background:var(--gold);border-color:var(--gold);color:#fff}
-.boost-info h4{font-size:13px;font-weight:700;color:var(--text)}
-.boost-info .bprice{font-size:15px;font-weight:800;color:var(--primary)}
-.boost-info p{font-size:11px;color:var(--text3);line-height:1.4}
-.btn-submit-free{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;margin-top:6px;transition:all .2s}
-.btn-submit-free:hover{background:#1b5e20}
-.btn-submit-wa{width:100%;padding:12px;background:var(--wa);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:14px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
-.btn-submit-wa:hover{background:#1da851}
+/* PUBLISH FORM */
+.flabel{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.finput,.fselect,.ftextarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text);background:var(--white);transition:border .2s;margin-bottom:14px}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--green)}
+.ftextarea{height:90px;resize:vertical}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.photo-upload{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;position:relative}
+.photo-upload:hover{border-color:var(--green);background:var(--green-light)}
+.photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.photo-upload-icon{font-size:28px;margin-bottom:6px}
+.photo-upload p{font-size:13px;color:var(--text3);font-weight:500}
+.photo-upload p span{color:var(--green);font-weight:600}
+.photo-previews{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.photo-preview{width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border);position:relative}
+.photo-del{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
 
-/* ======= TOAST ======= */
-.toast{position:fixed;bottom:90px;right:16px;background:var(--dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:1001;display:none;max-width:300px;animation:fadeUp .3s ease;border-left:4px solid var(--gold)}
+/* BOOST OPTION IN FORM */
+.bopt{border:1.5px solid var(--border);border-radius:var(--radius);padding:11px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bopt:hover,.bopt.sel{border-color:var(--green);background:var(--green-light)}
+.bopt-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.bopt.sel .bopt-radio{background:var(--green);border-color:var(--green)}
+.bopt.sel .bopt-radio::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;display:block}
+.bopt-info h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:1px}
+.bopt-price{font-size:14px;font-weight:700;color:var(--green)}
+.bopt-desc{font-size:11px;color:var(--text3)}
+.btn-submit{width:100%;padding:13px;background:var(--green);color:#fff;border-radius:var(--radius);font-weight:700;font-size:15px;margin-top:6px;transition:all .2s}
+.btn-submit:hover{background:var(--green-dark)}
+.btn-submit.wa{background:var(--wa)}
+.btn-submit.wa:hover{background:#1da851}
 
-/* ======= PHOTO UPLOAD ======= */
-.photo-upload-zone{border:2px dashed var(--border);border-radius:12px;padding:22px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--surface2);margin-top:6px}
-.photo-upload-zone:hover,.photo-upload-zone:active{border-color:var(--primary);background:#FFF0E8}
-.photo-upload-icon{font-size:32px;margin-bottom:6px}
-.photo-upload-text{font-size:13px;font-weight:600;color:var(--text2)}
-.photo-upload-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.photo-previews{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.photo-preview-wrap{position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:2px solid var(--border)}
-.photo-preview-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-.photo-preview-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
-/* Card image photo */
-.card-img img{width:100%;height:100%;object-fit:cover;display:block;border-radius:0}
-/* ======= EMPTY STATE ======= */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;background:var(--white);border-radius:16px;border:2px dashed var(--border);margin:10px 0}
-.empty-icon{font-size:64px;margin-bottom:16px;opacity:.7}
-.empty-state h3{font-size:20px;font-weight:700;color:var(--text);margin-bottom:10px}
-.empty-state p{color:var(--text2);font-size:14px;line-height:1.7;margin-bottom:24px}
-.empty-btn{font-size:15px;padding:13px 28px;border-radius:10px}
-/* ======= RESPONSIVE MOBILE ======= */
-@media(max-width:1100px){
-  .main-layout{grid-template-columns:200px 1fr}
-  .right-sidebar{display:none}
-}
+/* DETAIL */
+.detail-imgs{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;scrollbar-width:none}
+.detail-imgs::-webkit-scrollbar{display:none}
+.detail-img-item{width:100%;min-width:100%;height:220px;border-radius:var(--radius);object-fit:cover;background:linear-gradient(135deg,#e8f0e8,#d0e0d0);display:flex;align-items:center;justify-content:center;font-size:64px;flex-shrink:0}
+.detail-price{font-size:26px;font-weight:800;color:var(--green);margin-bottom:6px}
+.detail-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:10px}
+.detail-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{background:var(--bg);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:12px;color:var(--text2);font-weight:500}
+.detail-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:18px}
+.btn-contact{width:100%;padding:14px;background:var(--wa);color:#fff;border-radius:var(--radius);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s}
+.btn-contact:hover{background:#1da851}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 22px;border-radius:30px;font-size:13px;font-weight:500;z-index:1001;display:none;white-space:nowrap;box-shadow:var(--shadow2)}
+
+/* RESPONSIVE */
+@media(max-width:1050px){.main{grid-template-columns:1fr}.sidebar{display:none}}
 @media(max-width:768px){
-  .header-top{display:none}
-  .header-main{padding:8px 12px;gap:8px;flex-wrap:nowrap}
-  .search-bar{order:0;flex:1;min-width:0}
-  .search-bar select{display:none}
-  .search-bar input{font-size:14px;padding:9px 10px}
-  .search-btn{padding:9px 12px;font-size:16px}
-  .logo-text{font-size:18px}
-  .logo-icon{width:34px;height:34px;font-size:17px}
-  .btn-login{display:none}
-  .btn-post{padding:8px 12px;font-size:12px;white-space:nowrap}
-  .main-layout{grid-template-columns:1fr;padding:10px 10px}
-  .left-sidebar{display:none}
-  .listing-grid{grid-template-columns:repeat(2,1fr);gap:10px}
-  .card-img{height:110px;font-size:32px}
-  .card-price{font-size:14px}
-  .card-title{font-size:11px}
-  .promo-banner{flex-direction:column;text-align:center;padding:12px 14px;gap:10px}
-  .promo-stats{justify-content:center;gap:20px}
-  .promo-stat .num{font-size:18px}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:20px}
-  .hero-ad{flex-direction:column;text-align:center;gap:8px;padding:10px 14px}
-  .free-banner{font-size:11px;padding:7px 10px;gap:6px}
-  .free-tag{font-size:11px}
-  .section-title{font-size:14px}
-  nav{overflow-x:hidden}
-  .nav-inner{gap:0;padding:0 8px}
-  .nav-item{padding:10px 10px;font-size:12px}
-  .cats-bar{padding:8px 10px;gap:6px}
-  .cat-pill{padding:6px 10px}
-  .pill-emoji{font-size:16px}
-  .pill-label{font-size:10px}
+  .topbar{display:none}
+  .header-inner{flex-wrap:wrap;padding:10px 14px;gap:10px}
+  .search-wrap{order:3;flex:0 0 100%;max-width:100%}
+  .search-wrap select{display:none}
+  .main{padding:10px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .boost-banner{flex-direction:column;gap:14px}
+  .bb-stats{justify-content:flex-start}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .nav-cat{padding:10px 12px;font-size:12px}
+  .pill{padding:6px 12px;font-size:12px}
 }
 @media(max-width:480px){
-  .header-main{padding:8px 10px}
-  .logo-text{font-size:16px}
-  .logo-icon{width:30px;height:30px;font-size:15px;border-radius:7px}
-  .btn-post{font-size:11px;padding:7px 10px}
-  .listing-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-  .card-img{height:95px;font-size:28px}
-  .card-body{padding:7px 8px 9px}
-  .card-price{font-size:13px}
-  .card-title{font-size:11px}
-  .card-loc{font-size:10px}
-  .card-time{font-size:10px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .card-img{height:120px;font-size:36px}
+  .card-body{padding:8px 10px 10px}
+  .card-price{font-size:14px}
+  .card-title{font-size:12px}
+  .btn-login{display:none}
+  .logo-name{font-size:18px}
+  .btn-sell{padding:8px 14px;font-size:13px}
   .footer-grid{grid-template-columns:1fr}
-  .logo-text{font-size:16px}
-  .promo-stats{gap:12px}
-  .form-row{grid-template-columns:1fr}
-  .modal{padding:16px;border-radius:12px}
-  .pub-modal{padding:16px;border-radius:12px}
-  .modal h2{font-size:16px}
-  .pub-modal h2{font-size:16px}
-  .plan-card{padding:10px 11px}
-  .plan-card h3{font-size:12px}
-  .plan-price{font-size:15px}
-  .boost-option{padding:8px 10px}
-  .boost-info h4{font-size:12px}
-  .boost-info .bprice{font-size:13px}
-  .free-banner{flex-direction:column;gap:4px;text-align:center}
-  .hero-ad{padding:8px 10px}
-  .hero-ad-text h2{font-size:13px}
-  .hero-ad-text p{font-size:10px}
-  .btn-hero-ad{padding:7px 12px;font-size:11px}
-  .toast{bottom:80px;right:10px;left:10px;right:10px;max-width:100%;font-size:12px;padding:10px 14px}
-  .wa-float{width:50px;height:50px;font-size:22px;bottom:16px;right:14px}
-  .nav-item{padding:9px 8px;font-size:11px}
-  .promo-banner{padding:10px 12px}
-  .promo-left h3{font-size:14px}
-  .btn-boost{padding:8px 14px;font-size:12px}
-  .modal-overlay{padding:10px}
-  .footer-brand p{font-size:11px}
-  .footer-col h4{font-size:12px}
-  .footer-col ul li a{font-size:11px}
-  .footer-bottom{flex-direction:column;text-align:center;gap:6px}
-  .footer-monetize{font-size:10px}
-}
-@media(max-width:360px){
-  .listing-grid{grid-template-columns:1fr}
-  .card-img{height:140px;font-size:40px}
-  .header-main{gap:6px}
-  .btn-post{font-size:10px;padding:7px 8px}
+  .frow{grid-template-columns:1fr}
+  .mbox{padding:16px;border-radius:16px}
+  .pub-modal{padding:16px}
+  .overlay{padding:0;align-items:flex-end}
+  .mbox.md{border-radius:20px 20px 0 0;max-height:95vh;padding:20px 16px}
+  .mbox.sm{border-radius:20px 20px 0 0;max-height:95vh}
+  .m-title{font-size:17px}
+  .finput,.fselect,.ftextarea{font-size:16px;padding:12px 13px}
+  .bopt{padding:12px}
+  .bopt-price{font-size:16px}
+  .btn-submit{padding:15px;font-size:16px}
+  .btn-cancel{padding:13px;font-size:15px}
+  .photo-upload{padding:18px 14px}
+  .plan{padding:14px}
+  .plan-price{font-size:20px}
+  .btn-wa-pay{padding:15px;font-size:15px}
+  .sec-title{font-size:15px}
+  .boost-banner{padding:16px}
+  .bb-left h3{font-size:15px}
+  .search-wrap input{font-size:16px}
+  .search-btn{padding:10px 14px;font-size:13px}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER TOP -->
-<div class="header-top">
-  <span>🇩🇯 La marketplace N°1 à Djibouti &nbsp;·&nbsp; <strong>Publication 100% Gratuite</strong></span>
-  <div class="header-top-links">
-    <a onclick="showToast('❓ Aide disponible sur WhatsApp')">Aide</a>
-    <a onclick="showToast('👤 Connexion bientôt disponible')">Mon compte</a>
-    <a onclick="openPublish()">Mes annonces</a>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">🇩🇯 Suuq.DJ — La marketplace de Djibouti</div>
+  <div class="topbar-right">
+    <a onclick="openWA('Bonjour, j\'ai besoin d\'aide')">Aide</a>
+    <a onclick="showToast('Connexion bientôt disponible')">Mon compte</a>
+    <a onclick="openPublish()">Déposer une annonce</a>
   </div>
 </div>
 
 <!-- HEADER -->
-<div class="header-wrap">
-  <div class="header-main">
-    <div class="logo">
-      <div class="logo-icon">س</div>
-      <div class="logo-text">SUUQ<span>.DJ</span></div>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo" onclick="resetAll()">
+      <div class="logo-mark">س</div>
+      <span class="logo-name">Suuq<span>.DJ</span></span>
     </div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Que cherchez-vous ?">
-      <select aria-label="Ville">
-        <option>Tout Djibouti</option>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Voiture, téléphone, maison...">
+      <select id="villeFilter" onchange="loadAds()">
+        <option value="">Tout Djibouti</option>
         <option>Djibouti-Ville</option>
         <option>Balbala</option>
         <option>Ali Sabieh</option>
@@ -398,93 +308,69 @@ footer{background:var(--dark);margin-top:36px;padding:32px 16px 16px}
         <option>Dikhil</option>
         <option>Arta</option>
       </select>
-      <button class="search-btn" onclick="doSearch()">🔍</button>
+      <button class="search-btn" onclick="doSearch()">🔍 Rechercher</button>
     </div>
     <div class="header-actions">
-      <button class="btn-login" onclick="showToast('👤 Connexion bientôt disponible')">Connexion</button>
-      <button class="btn-post" onclick="openPublish()">+ Publier GRATUIT</button>
+      <button class="btn-login" onclick="showToast('Connexion bientôt disponible')">Connexion</button>
+      <button class="btn-sell" onclick="openPublish()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        Vendre
+      </button>
     </div>
+  </div>
+</header>
+
+<!-- NAV CATS -->
+<div class="nav-cats">
+  <div class="nav-cats-inner">
+    <div class="nav-cat active" onclick="navCat(this,'')">Tout</div>
+    <div class="nav-cat" onclick="navCat(this,'🚗 Véhicules')">🚗 Véhicules</div>
+    <div class="nav-cat" onclick="navCat(this,'🏠 Immobilier')">🏠 Immobilier</div>
+    <div class="nav-cat" onclick="navCat(this,'📱 Électronique')">📱 Électronique</div>
+    <div class="nav-cat" onclick="navCat(this,'👗 Mode & Beauté')">👗 Mode</div>
+    <div class="nav-cat" onclick="navCat(this,'🛋️ Maison & Jardin')">🛋️ Maison</div>
+    <div class="nav-cat" onclick="navCat(this,'💼 Emploi')">💼 Emploi</div>
+    <div class="nav-cat" onclick="navCat(this,'🐐 Animaux')">🐐 Animaux</div>
+    <div class="nav-cat" onclick="navCat(this,'🛠️ Services')">🛠️ Services</div>
+    <div class="nav-cat" onclick="navCat(this,'🫙 Alimentation')">🫙 Alimentation</div>
+    <div class="nav-cat" onclick="navCat(this,'⚽ Sport & Loisirs')">⚽ Sport</div>
   </div>
 </div>
 
-<!-- FREE BANNER -->
-<div class="free-banner">
-  ✅ Publication d'annonces <span>100% GRATUITE</span> &nbsp;·&nbsp; Boostez votre annonce à partir de <span>500 DJF</span> seulement
-</div>
+<!-- MAIN -->
+<div class="main">
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <div class="nav-item active" onclick="setNav(this,'Accueil')">🏠 Accueil</div>
-    <div class="nav-item" onclick="setNav(this,'Véhicules')">🚗 Véhicules</div>
-    <div class="nav-item" onclick="setNav(this,'Immobilier')">🏠 Immobilier</div>
-    <div class="nav-item" onclick="setNav(this,'Électronique')">📱 Électronique</div>
-    <div class="nav-item" onclick="setNav(this,'Mode')">👗 Mode</div>
-    <div class="nav-item" onclick="setNav(this,'Maison')">🛋️ Maison</div>
-    <div class="nav-item" onclick="setNav(this,'Emploi')">💼 Emploi</div>
-    <div class="nav-item" onclick="setNav(this,'Animaux')">🐐 Animaux</div>
-    <div class="nav-item" onclick="setNav(this,'Services')">🛠️ Services</div>
-    <div class="nav-item" onclick="setNav(this,'Alimentation')">🫙 Alimentation</div>
-    <div class="nav-item" onclick="openBoost()">⭐ TOP annonces</div>
-  </div>
-</nav>
-
-<!-- HERO AD -->
-<div class="hero-ad">
-  <span class="ad-pub-tag">PUBLICITÉ</span>
-  <div style="font-size:24px">🏦</div>
-  <div class="hero-ad-text">
-    <h2>Banque de Djibouti — <span>Crédit Express en 48h</span></h2>
-    <p>Financement auto, immobilier, projets personnels. Taux préférentiel.</p>
-  </div>
-  <button class="btn-hero-ad" onclick="showToast('📞 +253 21 35 xx xx')">En savoir plus →</button>
-</div>
-
-<!-- MAIN LAYOUT -->
-<div class="main-layout">
-
-  <!-- LEFT SIDEBAR -->
-  <aside class="left-sidebar">
-    <div class="sidebar-box">
-      <div class="sidebar-title">📂 Catégories</div>
-      <div class="cat-item" onclick="showToast('🚗 Véhicules — 0 annonces')"><div class="cat-left"><span>🚗</span> Véhicules</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('🏠 Immobilier — 0 annonces')"><div class="cat-left"><span>🏠</span> Immobilier</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('📱 Électronique — 0 annonces')"><div class="cat-left"><span>📱</span> Électronique</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('👗 Mode & Beauté — 0 annonces')"><div class="cat-left"><span>👗</span> Mode & Beauté</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('🛋️ Maison & Jardin — 0 annonces')"><div class="cat-left"><span>🛋️</span> Maison & Jardin</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('💼 Emploi — 0 annonces')"><div class="cat-left"><span>💼</span> Emploi</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('🛠️ Services — 0 annonces')"><div class="cat-left"><span>🛠️</span> Services</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('🐐 Animaux — 0 annonces')"><div class="cat-left"><span>🐐</span> Animaux</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('🫙 Alimentation — 0 annonces')"><div class="cat-left"><span>🫙</span> Alimentation</div><span class="cat-count">0</span></div>
-      <div class="cat-item" onclick="showToast('⚽ Sport & Loisirs — 0 annonces')"><div class="cat-left"><span>⚽</span> Sport & Loisirs</div><span class="cat-count">0</span></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sbox">
+      <div class="sbox-title">📂 Catégories</div>
+      <div class="scat" onclick="sideFilter('🚗 Véhicules')"><div class="scat-left"><span>🚗</span>Véhicules</div><span class="scat-n" id="cn-v">—</span></div>
+      <div class="scat" onclick="sideFilter('🏠 Immobilier')"><div class="scat-left"><span>🏠</span>Immobilier</div><span class="scat-n" id="cn-i">—</span></div>
+      <div class="scat" onclick="sideFilter('📱 Électronique')"><div class="scat-left"><span>📱</span>Électronique</div><span class="scat-n" id="cn-e">—</span></div>
+      <div class="scat" onclick="sideFilter('👗 Mode & Beauté')"><div class="scat-left"><span>👗</span>Mode & Beauté</div><span class="scat-n" id="cn-m">—</span></div>
+      <div class="scat" onclick="sideFilter('🛋️ Maison & Jardin')"><div class="scat-left"><span>🛋️</span>Maison & Jardin</div><span class="scat-n" id="cn-h">—</span></div>
+      <div class="scat" onclick="sideFilter('💼 Emploi')"><div class="scat-left"><span>💼</span>Emploi</div><span class="scat-n" id="cn-j">—</span></div>
+      <div class="scat" onclick="sideFilter('🛠️ Services')"><div class="scat-left"><span>🛠️</span>Services</div><span class="scat-n" id="cn-s">—</span></div>
+      <div class="scat" onclick="sideFilter('🐐 Animaux')"><div class="scat-left"><span>🐐</span>Animaux</div><span class="scat-n" id="cn-a">—</span></div>
+      <div class="scat" onclick="sideFilter('🫙 Alimentation')"><div class="scat-left"><span>🫙</span>Alimentation</div><span class="scat-n" id="cn-al">—</span></div>
+      <div class="scat" onclick="sideFilter('⚽ Sport & Loisirs')"><div class="scat-left"><span>⚽</span>Sport & Loisirs</div><span class="scat-n" id="cn-sp">—</span></div>
     </div>
-    <div class="sidebar-ad">
-      <div class="sad-top">PUBLICITÉ</div>
-      <div class="sad-body">
-        <span class="sad-emoji">📦</span>
-        <h3>Dahabshiil Express</h3>
-        <p>Livraison rapide partout à Djibouti-Ville.</p>
-        <button class="btn-sad" onclick="showToast('📦 +253 77 xx xx xx')">Contacter</button>
-      </div>
-    </div>
-    <div class="sidebar-ad">
-      <div class="sad-top red">VOTRE PUB ICI</div>
-      <div class="sad-body">
-        <span class="sad-emoji">🏪</span>
-        <h3>Votre boutique ici</h3>
-        <p>Touchez +50 000 djiboutiens par mois</p>
-        <button class="btn-sad gold" onclick="openWA('Bonjour, je veux faire de la publicité sur Suuq.DJ')">Faire de la pub</button>
-      </div>
-    </div>
-    <div class="sidebar-box">
-      <div class="sidebar-title gold">💰 Filtrer le prix</div>
-      <div class="price-inputs">
+    <div class="sbox">
+      <div class="sbox-title">💰 Prix</div>
+      <div class="price-wrap">
         <div class="price-row">
-          <input class="price-input" type="number" placeholder="Min DJF" id="priceMin">
-          <input class="price-input" type="number" placeholder="Max DJF" id="priceMax">
+          <input class="pinput" type="number" id="pmin" placeholder="Min DJF">
+          <input class="pinput" type="number" id="pmax" placeholder="Max DJF">
         </div>
-        <button class="btn-filter" onclick="applyFilter()">Appliquer</button>
+        <button class="btn-filter" onclick="loadAds()">Appliquer</button>
       </div>
+    </div>
+    <div class="sbox" style="padding:16px;text-align:center">
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">📊 En direct</div>
+      <div style="font-size:28px;font-weight:800;color:var(--green)" id="s-total">—</div>
+      <div style="font-size:12px;color:var(--text3)">annonces actives</div>
+      <div style="margin-top:12px;font-size:28px;font-weight:800;color:var(--green)" id="s-vis">1 847</div>
+      <div style="font-size:12px;color:var(--text3)">visiteurs actifs</div>
     </div>
   </aside>
 
@@ -492,281 +378,224 @@ footer{background:var(--dark);margin-top:36px;padding:32px 16px 16px}
   <main class="content">
 
     <!-- Pills -->
-    <div class="cats-bar">
-      <div class="cat-pill active" onclick="setPill(this)"><span class="pill-emoji">✨</span><span class="pill-label">Tout</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">🚗</span><span class="pill-label">Voitures</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">🏠</span><span class="pill-label">Maisons</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">📱</span><span class="pill-label">Téléphones</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">💻</span><span class="pill-label">Ordi</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">👗</span><span class="pill-label">Vêtements</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">🛋️</span><span class="pill-label">Meubles</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">🐐</span><span class="pill-label">Animaux</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">💼</span><span class="pill-label">Emplois</span></div>
-      <div class="cat-pill" onclick="setPill(this)"><span class="pill-emoji">🛠️</span><span class="pill-label">Services</span></div>
+    <div class="pills">
+      <div class="pill active" onclick="pillFilter(this,'')">✨ Tout</div>
+      <div class="pill" onclick="pillFilter(this,'🚗 Véhicules')">🚗 Voitures</div>
+      <div class="pill" onclick="pillFilter(this,'🏠 Immobilier')">🏠 Maisons</div>
+      <div class="pill" onclick="pillFilter(this,'📱 Électronique')">📱 Téléphones</div>
+      <div class="pill" onclick="pillFilter(this,'👗 Mode & Beauté')">👗 Mode</div>
+      <div class="pill" onclick="pillFilter(this,'🛋️ Maison & Jardin')">🛋️ Meubles</div>
+      <div class="pill" onclick="pillFilter(this,'🐐 Animaux')">🐐 Animaux</div>
+      <div class="pill" onclick="pillFilter(this,'💼 Emploi')">💼 Emplois</div>
+      <div class="pill" onclick="pillFilter(this,'🛠️ Services')">🛠️ Services</div>
     </div>
 
-
-
-    <!-- PROMO BOOST -->
-    <div class="promo-banner">
-      <div class="promo-left">
-        <h3>Boostez votre annonce — <span>à partir de 500 DJF !</span></h3>
-        <p>Soyez en première position et recevez 10× plus de contacts</p>
+    <!-- Annonces en vedette -->
+    <section>
+      <div class="sec-header">
+        <div class="sec-title"><div class="sec-bar"></div>Annonces en vedette</div>
+        <span class="sec-link" onclick="openBoost()">Mettre en vedette →</span>
       </div>
-      <div class="promo-stats">
-        <div class="promo-stat"><span class="num">0</span><span class="lbl">visiteurs/mois</span></div>
-        <div class="promo-stat"><span class="num">0</span><span class="lbl">annonces actives</span></div>
-        <div class="promo-stat"><span class="num">100%</span><span class="lbl">gratuit</span></div>
+      <div id="featGrid"><div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
+    </section>
+
+    <!-- Boost banner -->
+    <div class="boost-banner">
+      <div class="bb-left">
+        <h3>Votre annonce mérite d'être vue en premier</h3>
+        <p>Obtenez plus de contacts rapidement avec nos options de mise en avant</p>
       </div>
-      <button class="btn-boost" onclick="openBoost()">Booster maintenant ⚡</button>
+      <div class="bb-stats">
+        <div class="bb-stat"><span class="n" id="bb-total">—</span><span class="l">annonces actives</span></div>
+        <div class="bb-stat"><span class="n" id="bb-vis">1 847</span><span class="l">visiteurs actifs</span></div>
+      </div>
+      <button class="btn-boost" onclick="openBoost()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.28L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 2.28C6.81 18 5 15.21 5 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
+        Mettre en avant
+      </button>
     </div>
 
     <!-- Annonces récentes -->
     <section>
-      <div class="section-header">
-        <div class="section-title"><span class="title-dot"></span> 🕐 Annonces Récentes</div>
+      <div class="sec-header">
+        <div class="sec-title"><div class="sec-bar"></div>Dernières annonces</div>
+        <span class="sec-link" onclick="showToast('Toutes les annonces')">Voir tout →</span>
       </div>
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <h3>Aucune annonce pour l'instant</h3>
-        <p>Soyez le premier à publier une annonce sur Suuq.DJ !<br>C'est rapide, simple et <strong>100% gratuit</strong>.</p>
-        <button class="btn-post empty-btn" onclick="openPublish()">✍️ Publier la première annonce</button>
-      </div>
+      <div id="recentGrid"><div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
     </section>
-  </main>
 
-  <!-- RIGHT SIDEBAR -->
-  <aside class="right-sidebar" style="display:flex;flex-direction:column">
-    <div class="right-box">
-      <div class="right-box-title">📊 En direct</div>
-      <div class="stat-row"><span class="lbl">Annonces actives</span><span class="val">0</span></div>
-      <div class="stat-row"><span class="lbl">Nouvelles aujourd'hui</span><span class="val">0</span></div>
-      <div class="stat-row"><span class="lbl">Visiteurs actifs</span><span class="val" id="visitorCount">—</span></div>
-      <div class="stat-row"><span class="lbl">Vendeurs inscrits</span><span class="val">6 210</span></div>
-    </div>
-    <div class="right-ad">
-      <div class="rad-top">PUBLICITÉ</div>
-      <div class="rad-body">
-        <span class="rad-emoji">🚚</span>
-        <h3>Djib Express</h3>
-        <p>Livraison rapide partout en ville dès 1 500 DJF</p>
-        <button class="btn-rad" onclick="showToast('🚚 +253 77 xx xx xx')">Appeler</button>
-      </div>
-    </div>
-    <div class="right-box">
-      <div class="right-box-title">🔥 Recherches populaires</div>
-      <div class="tags-wrap">
-        <button class="pop-tag" onclick="showToast('🔍 iPhone')">iPhone</button>
-        <button class="pop-tag" onclick="showToast('🔍 Land Cruiser')">Land Cruiser</button>
-        <button class="pop-tag" onclick="showToast('🔍 Villa à louer')">Villa</button>
-        <button class="pop-tag" onclick="showToast('🔍 Moutons')">Moutons 🐐</button>
-        <button class="pop-tag" onclick="showToast('🔍 Emploi')">Emploi</button>
-        <button class="pop-tag" onclick="showToast('🔍 Dirac')">Dirac 👗</button>
-        <button class="pop-tag" onclick="showToast('🔍 Samsung')">Samsung</button>
-        <button class="pop-tag" onclick="showToast('🔍 Moto')">Moto 🏍️</button>
-      </div>
-    </div>
-    <div class="right-ad" style="border-color:var(--gold)">
-      <div class="rad-top gold">VOTRE PUB ICI</div>
-      <div class="rad-body">
-        <span class="rad-emoji">📢</span>
-        <h3>Publiez votre pub</h3>
-        <p>Touchez des milliers de djiboutiens chaque jour</p>
-        <button class="btn-rad" onclick="openWA('Bonjour, je souhaite faire de la publicité sur Suuq.DJ. Quels sont vos tarifs ?')">Nous contacter</button>
-      </div>
-    </div>
-    <div class="right-box">
-      <div class="right-box-title">🔔 Créer une alerte</div>
-      <div class="alert-box">
-        <p>Recevez une notification dès qu'une annonce correspond à votre recherche.</p>
-        <input class="alert-input" type="text" placeholder="Ex: iPhone 15, Villa...">
-        <button class="btn-alert" onclick="createAlert()">Créer l'alerte</button>
-      </div>
-    </div>
-  </aside>
+  </main>
 </div>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-brand-name">SUUQ<span>.DJ</span></div>
-        <p>La première marketplace djiboutienne. Achetez, vendez, échangez — tout ce dont vous avez besoin, au meilleur prix, partout à Djibouti. Publication <strong style="color:var(--gold)">100% gratuite</strong>.</p>
-        <div class="footer-apps">
-          <button class="app-btn" onclick="showToast('📱 Android — Bientôt disponible')">📱 Android</button>
-          <button class="app-btn" onclick="showToast('🍎 iPhone — Bientôt disponible')">🍎 iPhone</button>
-        </div>
+      <div>
+        <div class="footer-logo">Suuq<span>.DJ</span></div>
+        <p class="footer-desc">La marketplace de Djibouti. Achetez et vendez facilement — voitures, immobilier, électronique, mode et bien plus encore.</p>
       </div>
       <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a onclick="showToast('🏠 Accueil')">Accueil</a></li>
-          <li><a onclick="showToast('📂 Catégories')">Toutes les catégories</a></li>
-          <li><a onclick="openBoost()">Top annonces</a></li>
-          <li><a onclick="showToast('🆕 Nouvelles annonces')">Nouvelles annonces</a></li>
-          <li><a onclick="showToast('💼 Emplois à Djibouti')">Offres d'emploi</a></li>
-        </ul>
+        <h4>Parcourir</h4>
+        <a onclick="resetAll()">Toutes les annonces</a>
+        <a onclick="navCat(null,'🚗 Véhicules')">Véhicules</a>
+        <a onclick="navCat(null,'🏠 Immobilier')">Immobilier</a>
+        <a onclick="navCat(null,'📱 Électronique')">Électronique</a>
+        <a onclick="navCat(null,'💼 Emploi')">Emploi</a>
       </div>
       <div class="footer-col">
         <h4>Vendeurs</h4>
-        <ul>
-          <li><a onclick="openPublish()">Déposer une annonce</a></li>
-          <li><a onclick="openBoost()">Booster mon annonce</a></li>
-          <li><a onclick="openWA('Bonjour, je veux ouvrir une boutique pro sur Suuq.DJ')">Boutique pro</a></li>
-          <li><a onclick="openWA('Bonjour, je veux faire de la publicité sur Suuq.DJ')">Faire de la pub</a></li>
-        </ul>
+        <a onclick="openPublish()">Déposer une annonce</a>
+        <a onclick="openBoost()">Options de mise en avant</a>
+        <a onclick="openWA('Bonjour, je veux ouvrir une boutique pro sur Suuq.DJ')">Boutique pro</a>
+        <a onclick="openWA('Bonjour, je veux faire de la publicité sur Suuq.DJ')">Publicité</a>
       </div>
       <div class="footer-col">
-        <h4>Aide & Contact</h4>
-        <ul>
-          <li><a onclick="openWA('Bonjour, j\'ai besoin d\'aide sur Suuq.DJ')">Centre d'aide</a></li>
-          <li><a onclick="showToast('📜 Conditions d\'utilisation')">Conditions d'utilisation</a></li>
-          <li><a onclick="showToast('🔒 Politique de confidentialité')">Confidentialité</a></li>
-          <li><a onclick="openWA('Bonjour, je souhaite vous contacter')">Nous contacter</a></li>
-        </ul>
+        <h4>Aide</h4>
+        <a onclick="openWA('Bonjour, j\'ai besoin d\'aide sur Suuq.DJ')">Centre d'aide</a>
+        <a onclick="showToast('Conditions d\'utilisation')">Conditions d'utilisation</a>
+        <a onclick="showToast('Politique de confidentialité')">Confidentialité</a>
+        <a onclick="openWA('Bonjour Suuq.DJ !')">Nous contacter</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Suuq.DJ — Marketplace de Djibouti. Tous droits réservés.</p>
-      <p class="footer-monetize">💰 Pub & Boost : pub@suuq.dj · WhatsApp +253 77215151</p>
+      <p>© 2025 Suuq.DJ — Tous droits réservés.</p>
+      <p class="footer-wa">WhatsApp : +253 77215151</p>
     </div>
   </div>
 </footer>
 
-<!-- WHATSAPP FLOAT BUTTON -->
-<a class="wa-float wa-pulse" onclick="openWA('Bonjour, je veux publier ou booster une annonce sur Suuq.DJ')" title="Contacter sur WhatsApp">
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
+<!-- WA FLOAT -->
+<button class="wa-float" onclick="openWA('Bonjour Suuq.DJ !')">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</button>
 
 <!-- MODAL BOOST -->
-<div class="modal-overlay" id="boostModal">
-  <div class="modal">
-    <h2>⚡ Boostez votre annonce</h2>
-    <p class="modal-sub">Choisissez un pack pour être vu en premier par des milliers de djiboutiens.</p>
-    <div class="modal-free-note">✅ La publication est <strong>100% gratuite</strong>. Le boost est une option payante pour obtenir plus de visibilité.</div>
-
-    <div class="plan-card selected" id="plan1" onclick="selectPlan('plan1')">
-      <h3>🟡 Pack Starter — 3 jours</h3>
+<div class="overlay" id="boostOverlay">
+  <div class="mbox sm" style="position:relative">
+    <button class="m-close" onclick="closeBoost()">✕</button>
+    <div class="m-title">Mettre en avant</div>
+    <div class="m-sub">Choisissez une option pour obtenir plus de visibilité.</div>
+    <div class="plan sel" id="p1" onclick="selPlan('p1')">
+      <div class="plan-name">⚡ Starter — 3 jours</div>
       <div class="plan-price">500 DJF</div>
-      <p>Position TOP pendant 3 jours · Badge doré · 3× plus de vues</p>
+      <div class="plan-desc">Position prioritaire · 3× plus de contacts</div>
     </div>
-    <div class="plan-card recommended" id="plan2" onclick="selectPlan('plan2')">
-      <h3>🔴 Pack Populaire — 7 jours</h3>
+    <div class="plan rec" id="p2" onclick="selPlan('p2')">
+      <div class="plan-name">🔥 Pro — 7 jours</div>
       <div class="plan-price">1 500 DJF</div>
-      <p>Position #1 pendant 7 jours · Badge URGENT · Push vers les abonnés</p>
+      <div class="plan-desc">Position #1 · Badge vedette · Notification abonnés</div>
     </div>
-    <div class="plan-card" id="plan3" onclick="selectPlan('plan3')">
-      <h3>🔥 Pack Pro — 15 jours</h3>
+    <div class="plan" id="p3" onclick="selPlan('p3')">
+      <div class="plan-name">💎 Business — 15 jours</div>
       <div class="plan-price">2 500 DJF</div>
-      <p>Position TOP 15 jours · Encart sidebar · Mise en avant sur l'accueil</p>
+      <div class="plan-desc">TOP 15 jours · Encart sidebar · Mise en avant accueil</div>
     </div>
-    <div class="plan-card" id="plan4" onclick="selectPlan('plan4')">
-      <h3>⭐ Pack Premium — 30 jours</h3>
+    <div class="plan" id="p4" onclick="selPlan('p4')">
+      <div class="plan-name">👑 Premium — 30 jours</div>
       <div class="plan-price">4 500 DJF</div>
-      <p>Position TOP 30 jours + Pub sidebar + Newsletter hebdo + Badge exclusif</p>
+      <div class="plan-desc">TOP 30 jours · Newsletter · Badge exclusif</div>
     </div>
-
-    <button class="wa-pay-btn" onclick="payViaWA()">
+    <button class="btn-wa-pay" onclick="payWA()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Payer & Confirmer sur WhatsApp
+      Confirmer sur WhatsApp
     </button>
-    <button class="modal-cancel" onclick="closeBoost()">Annuler</button>
+    <button class="btn-cancel" onclick="closeBoost()">Annuler</button>
   </div>
 </div>
 
-<!-- MODAL PUBLIER ANNONCE -->
-<div class="modal-overlay" id="publishModal">
-  <div class="pub-modal">
-    <h2>✍️ Déposer une annonce</h2>
-    <span class="free-badge-modal">✅ 100% GRATUIT</span>
+<!-- MODAL PUBLIER -->
+<div class="overlay" id="publishOverlay">
+  <div class="mbox md" style="position:relative;max-height:92vh;overflow-y:auto">
+    <button class="m-close" onclick="closePublish()">✕</button>
+    <div class="m-title">Déposer une annonce</div>
+    <div class="m-sub">Remplissez les informations de votre article.</div>
 
-    <div class="form-group">
-      <label class="form-label">Titre de l'annonce *</label>
-      <input class="form-input" type="text" id="adTitle" placeholder="Ex: iPhone 15 Pro 256GB noir">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Catégorie *</label>
-        <select class="form-select" id="adCat">
+    <label class="flabel">Titre *</label>
+    <input class="finput" id="aTitle" placeholder="Ex: iPhone 15 Pro 256GB">
+
+    <div class="frow">
+      <div>
+        <label class="flabel">Catégorie *</label>
+        <select class="fselect" id="aCat">
           <option value="">Choisir...</option>
-          <option>🚗 Véhicules</option>
-          <option>🏠 Immobilier</option>
-          <option>📱 Électronique</option>
-          <option>👗 Mode & Beauté</option>
-          <option>🛋️ Maison & Jardin</option>
-          <option>💼 Emploi</option>
-          <option>🛠️ Services</option>
-          <option>🐐 Animaux</option>
-          <option>🫙 Alimentation</option>
-          <option>⚽ Sport & Loisirs</option>
+          <option>🚗 Véhicules</option><option>🏠 Immobilier</option>
+          <option>📱 Électronique</option><option>👗 Mode & Beauté</option>
+          <option>🛋️ Maison & Jardin</option><option>💼 Emploi</option>
+          <option>🛠️ Services</option><option>🐐 Animaux</option>
+          <option>🫙 Alimentation</option><option>⚽ Sport & Loisirs</option>
           <option>Autre</option>
         </select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Ville *</label>
-        <select class="form-select" id="adCity">
+      <div>
+        <label class="flabel">Ville *</label>
+        <select class="fselect" id="aCity">
           <option value="">Choisir...</option>
-          <option>Djibouti-Ville</option>
-          <option>Balbala</option>
-          <option>Ali Sabieh</option>
-          <option>Tadjourah</option>
-          <option>Obock</option>
-          <option>Dikhil</option>
-          <option>Arta</option>
+          <option>Djibouti-Ville</option><option>Balbala</option>
+          <option>Ali Sabieh</option><option>Tadjourah</option>
+          <option>Obock</option><option>Dikhil</option><option>Arta</option>
         </select>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Prix (DJF)</label>
-      <input class="form-input" type="number" id="adPrice" placeholder="Ex: 50000 — laisser vide si négociable">
+
+    <label class="flabel">Prix (DJF) — laisser vide si à négocier</label>
+    <input class="finput" type="number" id="aPrice" placeholder="Ex: 50000">
+
+    <label class="flabel">Description *</label>
+    <textarea class="ftextarea" id="aDesc" placeholder="Décrivez votre article : état, caractéristiques, raison de la vente..."></textarea>
+
+    <label class="flabel">Photos (optionnel)</label>
+    <div class="photo-upload" id="photoZone">
+      <input type="file" id="photoInput" accept="image/*" multiple onchange="previewPhotos(this)">
+      <div class="photo-upload-icon">📷</div>
+      <p>Appuyez pour ajouter des photos<br><span>Jusqu'à 5 photos</span></p>
     </div>
-    <div class="form-group">
-      <label class="form-label">Description *</label>
-      <textarea class="form-textarea" id="adDesc" placeholder="Décrivez votre article, son état, les détails importants..."></textarea>
+    <div class="photo-previews" id="photoPreviews"></div>
+
+    <label class="flabel">Votre WhatsApp *</label>
+    <input class="finput" type="tel" id="aPhone" placeholder="Ex: 253 77 xx xx xx">
+
+    <label class="flabel" style="margin-bottom:10px">Option de mise en avant <span style="color:var(--text3);font-weight:400">(optionnel)</span></label>
+    <div class="bopt sel" id="b0" onclick="selBoost('b0','gratuit','0')">
+      <div class="bopt-radio"></div>
+      <div class="bopt-info"><h4>Sans mise en avant</h4><div class="bopt-price">0 DJF</div><div class="bopt-desc">Publication standard</div></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Votre numéro WhatsApp *</label>
-      <input class="form-input" type="tel" id="adPhone" placeholder="Ex: 253 77 xx xx xx">
+    <div class="bopt" id="b1" onclick="selBoost('b1','Starter 3 jours','500')">
+      <div class="bopt-radio"></div>
+      <div class="bopt-info"><h4>⚡ Starter — 3 jours</h4><div class="bopt-price">500 DJF</div><div class="bopt-desc">Position prioritaire · 3× plus de contacts</div></div>
+    </div>
+    <div class="bopt" id="b2" onclick="selBoost('b2','Pro 7 jours','1500')">
+      <div class="bopt-radio"></div>
+      <div class="bopt-info"><h4>🔥 Pro — 7 jours</h4><div class="bopt-price">1 500 DJF</div><div class="bopt-desc">Position #1 · Badge vedette</div></div>
+    </div>
+    <div class="bopt" id="b3" onclick="selBoost('b3','Business 15 jours','2500')">
+      <div class="bopt-radio"></div>
+      <div class="bopt-info"><h4>💎 Business — 15 jours</h4><div class="bopt-price">2 500 DJF</div><div class="bopt-desc">TOP 15 jours + sidebar</div></div>
+    </div>
+    <div class="bopt" id="b4" onclick="selBoost('b4','Premium 30 jours','4500')">
+      <div class="bopt-radio"></div>
+      <div class="bopt-info"><h4>👑 Premium — 30 jours</h4><div class="bopt-price">4 500 DJF</div><div class="bopt-desc">TOP 30 jours + newsletter + badge exclusif</div></div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">📸 Photos de l'annonce <span style="color:var(--text3);font-weight:400">(optionnel — max 4 photos)</span></label>
-      <div class="photo-upload-zone" id="photoZone" onclick="document.getElementById('adPhotos').click()">
-        <div class="photo-upload-icon">📷</div>
-        <div class="photo-upload-text">Appuyez pour ajouter des photos</div>
-        <div class="photo-upload-sub">JPG, PNG · Max 4 photos</div>
-      </div>
-      <input type="file" id="adPhotos" accept="image/*" multiple style="display:none" onchange="handlePhotos(this)">
-      <div class="photo-previews" id="photoPreviews"></div>
-    </div>
+    <button class="btn-submit" id="submitBtn" onclick="submitAd()">Publier l'annonce</button>
+    <button class="btn-cancel" style="margin-top:8px" onclick="closePublish()">Annuler</button>
+  </div>
+</div>
 
-    <div class="form-group">
-      <label class="form-label">🚀 Booster votre annonce ? <span style="color:var(--text3);font-weight:400">(optionnel)</span></label>
-      <div class="boost-option selected" id="boost0" onclick="selectBoost('boost0','Gratuit — Sans boost')">
-        <div class="boost-check">✓</div>
-        <div class="boost-info"><h4>🆓 Sans boost — Gratuit</h4><div class="bprice">0 DJF</div><p>Annonce publiée normalement dans la liste</p></div>
-      </div>
-      <div class="boost-option" id="boost1" onclick="selectBoost('boost1','Pack Starter 500 DJF — 3 jours')">
-        <div class="boost-check"></div>
-        <div class="boost-info"><h4>🟡 Pack Starter — 3 jours</h4><div class="bprice">500 DJF</div><p>Position TOP · 3× plus de vues</p></div>
-      </div>
-      <div class="boost-option" id="boost2" onclick="selectBoost('boost2','Pack Populaire 1500 DJF — 7 jours')">
-        <div class="boost-check"></div>
-        <div class="boost-info"><h4>🔴 Pack Populaire — 7 jours</h4><div class="bprice">1 500 DJF</div><p>Position #1 · Badge URGENT</p></div>
-      </div>
-      <div class="boost-option" id="boost3" onclick="selectBoost('boost3','Pack Pro 2500 DJF — 15 jours')">
-        <div class="boost-check"></div>
-        <div class="boost-info"><h4>🔥 Pack Pro — 15 jours</h4><div class="bprice">2 500 DJF</div><p>TOP 15 jours + sidebar</p></div>
-      </div>
-      <div class="boost-option" id="boost4" onclick="selectBoost('boost4','Pack Premium 4500 DJF — 30 jours')">
-        <div class="boost-check"></div>
-        <div class="boost-info"><h4>⭐ Pack Premium — 30 jours</h4><div class="bprice">4 500 DJF</div><p>TOP 30 jours + newsletter + badge exclusif</p></div>
-      </div>
-    </div>
-
-    <button class="btn-submit-free" id="submitBtn" onclick="submitAd()">✅ Publier mon annonce gratuitement</button>
-    <button class="modal-cancel" style="margin-top:8px" onclick="closePublish()">Annuler</button>
+<!-- MODAL DETAIL -->
+<div class="overlay" id="detailOverlay">
+  <div class="mbox md" style="position:relative;max-height:92vh;overflow-y:auto">
+    <button class="m-close" onclick="closeDetail()">✕</button>
+    <div class="detail-imgs" id="dImgs"></div>
+    <div class="detail-price" id="dPrice"></div>
+    <div class="detail-title" id="dTitle"></div>
+    <div class="detail-chips" id="dChips"></div>
+    <div class="detail-desc" id="dDesc"></div>
+    <button class="btn-contact" id="dWaBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Contacter le vendeur
+    </button>
+    <button class="btn-cancel" style="margin-top:8px" onclick="closeDetail()">Fermer</button>
   </div>
 </div>
 
@@ -774,299 +603,277 @@ footer{background:var(--dark);margin-top:36px;padding:32px 16px 16px}
 <div class="toast" id="toast"></div>
 
 <script>
-  // ===== CONFIG =====
-  var WA_NUMBER = '25377215151'; // Ton numéro WhatsApp
+// ── CONFIG ──
+var SB_URL = 'https://dikexxapbytavavrnybv.supabase.co';
+var SB_KEY = 'sb_publishable_GgsP3AQIvXVTHIxD7uIc3A_00ysoZ2R';
+var WA     = '25377215151';
+var sb     = supabase.createClient(SB_URL, SB_KEY);
 
-  function openWA(msg) {
-    var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
-    window.open(url, '_blank');
-  }
+var EMOJIS = {'🚗 Véhicules':'🚗','🏠 Immobilier':'🏠','📱 Électronique':'📱','👗 Mode & Beauté':'👗','🛋️ Maison & Jardin':'🛋️','💼 Emploi':'💼','🛠️ Services':'🛠️','🐐 Animaux':'🐐','🫙 Alimentation':'🫙','⚽ Sport & Loisirs':'⚽','💻 Informatique':'💻','Autre':'📦'};
+function emoji(cat){ return EMOJIS[cat]||'📦'; }
 
-  // ===== TOAST =====
-  var toastTimer;
-  function showToast(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ t.style.display='none'; }, 3200);
-  }
+function ago(d){
+  var s=Math.floor((Date.now()-new Date(d))/1000);
+  if(s<60)return 'À l\'instant';
+  if(s<3600)return 'Il y a '+Math.floor(s/60)+'min';
+  if(s<86400)return 'Il y a '+Math.floor(s/3600)+'h';
+  return 'Il y a '+Math.floor(s/86400)+'j';
+}
 
-  // ===== BOOST MODAL =====
-  function openBoost() { document.getElementById('boostModal').classList.add('show'); }
-  function closeBoost() { document.getElementById('boostModal').classList.remove('show'); }
-  function selectPlan(id) {
-    document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
-    document.getElementById(id).classList.add('selected');
-  }
-  function payViaWA() {
-    var selected = document.querySelector('.plan-card.selected');
-    var planName = selected ? selected.querySelector('h3').textContent : 'un pack';
-    var price = selected ? selected.querySelector('.plan-price').textContent : '';
-    var msg = 'Bonjour ! Je veux booster mon annonce sur Suuq.DJ.\n\n📦 Pack choisi : ' + planName + '\n💰 Montant : ' + price + '\n\nPouvez-vous me confirmer les modalités de paiement ?';
-    closeBoost();
-    openWA(msg);
-  }
-  document.getElementById('boostModal').addEventListener('click', function(e){ if(e.target===this) closeBoost(); });
-
-  // ===== PUBLISH MODAL =====
-  var selectedBoost = 'boost0';
-  var selectedBoostLabel = 'Gratuit — Sans boost';
-
-  function openPublish() { document.getElementById('publishModal').classList.add('show'); }
-  function closePublish() { document.getElementById('publishModal').classList.remove('show'); }
-
-  function selectBoost(id, label) {
-    document.querySelectorAll('.boost-option').forEach(function(o){
-      o.classList.remove('selected');
-      o.querySelector('.boost-check').textContent = '';
-    });
-    document.getElementById(id).classList.add('selected');
-    document.getElementById(id).querySelector('.boost-check').textContent = '✓';
-    selectedBoost = id;
-    selectedBoostLabel = label;
-    var btn = document.getElementById('submitBtn');
-    if(id === 'boost0') {
-      btn.textContent = '✅ Publier mon annonce gratuitement';
-      btn.style.background = 'var(--success)';
-    } else {
-      btn.textContent = '✅ Publier + Payer le boost sur WhatsApp';
-      btn.style.background = 'var(--wa)';
-    }
-  }
-
-  // ===== PHOTOS =====
-  var adPhotos = []; // tableau de base64
-
-  function handlePhotos(input) {
-    var files = Array.from(input.files);
-    var remaining = 4 - adPhotos.length;
-    if(remaining <= 0){ showToast('⚠️ Maximum 4 photos'); return; }
-    files = files.slice(0, remaining);
-    files.forEach(function(file){
-      var reader = new FileReader();
-      reader.onload = function(e){
-        adPhotos.push(e.target.result);
-        renderPhotoPreviews();
-      };
-      reader.readAsDataURL(file);
-    });
-    input.value = '';
-  }
-
-  function renderPhotoPreviews() {
-    var container = document.getElementById('photoPreviews');
-    container.innerHTML = '';
-    adPhotos.forEach(function(src, i){
+// ── PHOTO UPLOAD ──
+var uploadedPhotos = [];
+function previewPhotos(input){
+  var files = Array.from(input.files).slice(0,5);
+  var prev = document.getElementById('photoPreviews');
+  prev.innerHTML = '';
+  uploadedPhotos = files;
+  files.forEach(function(f,i){
+    var reader = new FileReader();
+    reader.onload = function(e){
       var wrap = document.createElement('div');
-      wrap.className = 'photo-preview-wrap';
+      wrap.style.position='relative';
       var img = document.createElement('img');
-      img.src = src;
-      var del = document.createElement('button');
-      del.className = 'photo-preview-del';
-      del.textContent = '✕';
-      del.onclick = function(e){ e.stopPropagation(); adPhotos.splice(i,1); renderPhotoPreviews(); };
+      img.src = e.target.result;
+      img.className = 'photo-preview';
+      var del = document.createElement('div');
+      del.className = 'photo-del';
+      del.textContent = '×';
+      del.onclick = function(){
+        uploadedPhotos.splice(i,1);
+        wrap.remove();
+      };
       wrap.appendChild(img);
       wrap.appendChild(del);
-      container.appendChild(wrap);
-    });
-    // Mettre à jour la zone d'upload
-    var zone = document.getElementById('photoZone');
-    if(adPhotos.length >= 4){
-      zone.style.opacity = '0.4';
-      zone.style.pointerEvents = 'none';
-    } else {
-      zone.style.opacity = '1';
-      zone.style.pointerEvents = 'auto';
-    }
-  }
-
-  // Tableau des annonces publiées
-  var annonces = [];
-
-  function getCatEmoji(cat) {
-    var emojis = {'🚗 Véhicules':'🚗','🏠 Immobilier':'🏠','📱 Électronique':'📱','👗 Mode & Beauté':'👗','🛋️ Maison & Jardin':'🛋️','💼 Emploi':'💼','🛠️ Services':'🛠️','🐐 Animaux':'🐐','🫙 Alimentation':'🫙','⚽ Sport & Loisirs':'⚽','Autre':'📦'};
-    for(var k in emojis){ if(cat.indexOf(k.replace(/[^a-zA-ZÀ-ÿ]/g,''))>=0 || cat===k) return emojis[k]; }
-    return '📦';
-  }
-
-  function getCatColors(cat) {
-    var colors = {'Véhicules':'#D4C4A0,#A89070','Immobilier':'#C4D4B0,#90A870','Électronique':'#C4C4D4,#9090A8','Mode':'#D0B8C4,#A88898','Maison':'#D0C4B8,#A89888','Emploi':'#D4C4D0,#A890A0','Services':'#B8C4D0,#8898A8','Animaux':'#D4D0B8,#A8A080','Alimentation':'#D0D4B8,#A0A880','Sport':'#B8D4C4,#80A890'};
-    for(var k in colors){ if(cat.indexOf(k)>=0) return colors[k]; }
-    return '#D0D0D0,#A0A0A0';
-  }
-
-  function renderAnnonces() {
-    // Supprimer l'état vide si présent
-    var emptyState = document.querySelector('.empty-state');
-    if(emptyState) emptyState.remove();
-
-    // Chercher ou créer la grille principale
-    var grid = document.getElementById('mainGrid');
-    if(!grid){
-      var section = document.querySelector('section');
-      if(!section){
-        // Créer une section si elle n'existe pas
-        section = document.createElement('section');
-        document.querySelector('.content').appendChild(section);
-      }
-      // Mettre à jour le header de section
-      var header = section.querySelector('.section-header');
-      if(!header){
-        header = document.createElement('div');
-        header.className = 'section-header';
-        header.innerHTML = '<div class="section-title"><span class="title-dot"></span> 🕐 Annonces Récentes</div>';
-        section.insertBefore(header, section.firstChild);
-      }
-      grid = document.createElement('div');
-      grid.id = 'mainGrid';
-      grid.className = 'listing-grid';
-      section.appendChild(grid);
-    }
-
-    grid.innerHTML = '';
-    annonces.forEach(function(a, i){
-      var emoji = getCatEmoji(a.cat);
-      var colors = getCatColors(a.cat);
-      var priceText = a.price ? parseInt(a.price).toLocaleString('fr') + ' <span class="cur">DJF</span>' : 'À négocier';
-      var badgeHTML = a.isBoosted ? '<div class="card-badges"><span class="badge top">TOP</span></div>' : '';
-      var imgHTML = a.photos && a.photos.length > 0
-        ? '<div class="card-img" style="padding:0;overflow:hidden"><img src="' + a.photos[0] + '" alt="' + a.title + '"></div>'
-        : '<div class="card-img" style="background:linear-gradient(135deg,#' + colors + ')">' + emoji + '</div>';
-      var card = document.createElement('article');
-      card.className = 'listing-card' + (a.isBoosted ? ' featured' : '');
-      card.innerHTML = badgeHTML
-        + imgHTML
-        + '<div class="card-body">'
-        + '<div class="card-price">' + priceText + '</div>'
-        + '<div class="card-title">' + a.title + '</div>'
-        + '<div class="card-loc">📍 ' + a.city + ' · ' + a.cat + '</div>'
-        + '<div class="card-footer"><span class="card-time">À l\'instant</span>'
-        + '<a class="card-fav" href="https://wa.me/' + a.phone.replace(/\D/g,'') + '?text=' + encodeURIComponent('Bonjour, je suis intéressé(e) par votre annonce : ' + a.title) + '" target="_blank" style="background:var(--wa);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;text-decoration:none">📞 Contacter</a>'
-        + '</div>'
-        + '</div>';
-      grid.appendChild(card);
-    });
-
-    // Mettre à jour les compteurs
-    updateCounters();
-  }
-
-  function updateCounters() {
-    var total = annonces.length;
-    document.querySelectorAll('.stat-row .val')[0].textContent = total;
-    document.querySelectorAll('.stat-row .val')[1].textContent = total > 0 ? '+' + total : '0';
-    document.querySelectorAll('.promo-stat .num')[1].textContent = total > 0 ? total + '' : '0';
-  }
-
-  function submitAd() {
-    var title = document.getElementById('adTitle').value.trim();
-    var cat = document.getElementById('adCat').value;
-    var city = document.getElementById('adCity').value;
-    var desc = document.getElementById('adDesc').value.trim();
-    var phone = document.getElementById('adPhone').value.trim();
-    if(!title){ showToast('⚠️ Entrez un titre pour votre annonce'); return; }
-    if(!cat){ showToast('⚠️ Choisissez une catégorie'); return; }
-    if(!city){ showToast('⚠️ Choisissez votre ville'); return; }
-    if(!desc){ showToast('⚠️ Ajoutez une description'); return; }
-    if(!phone){ showToast('⚠️ Entrez votre numéro WhatsApp'); return; }
-
-    var price = document.getElementById('adPrice').value;
-    var isBoosted = selectedBoost !== 'boost0';
-
-    // Ajouter l'annonce au tableau
-    annonces.unshift({ title: title, cat: cat, city: city, desc: desc, phone: phone, price: price, isBoosted: isBoosted, photos: adPhotos.slice() });
-
-    closePublish();
-    renderAnnonces();
-    showToast('✅ Annonce publiée avec succès !');
-
-    // Réinitialiser le formulaire
-    document.getElementById('adTitle').value = '';
-    document.getElementById('adCat').value = '';
-    document.getElementById('adCity').value = '';
-    document.getElementById('adDesc').value = '';
-    document.getElementById('adPhone').value = '';
-    document.getElementById('adPrice').value = '';
-    adPhotos = [];
-    renderPhotoPreviews();
-    selectBoost('boost0','Gratuit — Sans boost');
-
-    // Si boost payant → envoyer sur WhatsApp pour paiement
-    if(isBoosted){
-      var priceText = price ? parseInt(price).toLocaleString('fr') + ' DJF' : 'À négocier';
-      var msg = '💳 *PAIEMENT BOOST — SUUQ.DJ*\n\n'
-        + '📌 *Annonce :* ' + title + '\n'
-        + '📂 *Catégorie :* ' + cat + '\n'
-        + '💰 *Prix :* ' + priceText + '\n'
-        + '🚀 *Boost choisi :* ' + selectedBoostLabel + '\n\n'
-        + 'Je souhaite payer pour booster mon annonce.';
-      setTimeout(function(){ openWA(msg); }, 800);
-    }
-  }
-
-  document.getElementById('publishModal').addEventListener('click', function(e){ if(e.target===this) closePublish(); });
-
-  // ===== NAV =====
-  function setNav(el, cat) {
-    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-    el.classList.add('active');
-    showToast('📂 ' + cat);
-  }
-  function setPill(el) {
-    document.querySelectorAll('.cat-pill').forEach(function(p){ p.classList.remove('active'); });
-    el.classList.add('active');
-  }
-
-  // ===== SEARCH =====
-  function doSearch() {
-    var q = document.getElementById('searchInput').value.trim();
-    if(q) showToast('🔍 Recherche : "' + q + '" — ' + (Math.floor(Math.random()*500)+50) + ' résultats');
-    else showToast('⚠️ Entrez un mot-clé');
-  }
-  document.getElementById('searchInput').addEventListener('keydown', function(e){ if(e.key==='Enter') doSearch(); });
-
-  // ===== FAV =====
-  function toggleFav(btn) {
-    var isFav = btn.textContent === '❤️';
-    btn.textContent = isFav ? '🤍' : '❤️';
-    showToast(isFav ? '🤍 Retiré des favoris' : '❤️ Ajouté aux favoris');
-  }
-
-  // ===== FILTRE PRIX =====
-  function applyFilter() {
-    var min = document.getElementById('priceMin').value;
-    var max = document.getElementById('priceMax').value;
-    if(!min && !max){ showToast('⚠️ Entrez un prix min ou max'); return; }
-    var msg = '💰 Filtre appliqué';
-    if(min) msg += ' — Min : ' + parseInt(min).toLocaleString('fr') + ' DJF';
-    if(max) msg += ' — Max : ' + parseInt(max).toLocaleString('fr') + ' DJF';
-    showToast(msg);
-  }
-
-  // ===== ALERTE =====
-  function createAlert() {
-    var input = document.querySelector('.alert-input');
-    var val = input.value.trim();
-    if(!val){ showToast('⚠️ Entrez un mot-clé'); return; }
-    showToast('🔔 Alerte créée pour "' + val + '"');
-    input.value = '';
-  }
-
-  // ===== LIVE COUNTER =====
-  var visitors = 1847;
-  setInterval(function(){
-    visitors += Math.floor(Math.random()*5)-2;
-    if(visitors<1750) visitors=1750;
-    if(visitors>2200) visitors=2200;
-    var el = document.getElementById('visitorCount');
-    if(el) el.textContent = visitors.toLocaleString('fr');
-  }, 4000);
-
-  // ===== ESCAPE KEY =====
-  document.addEventListener('keydown', function(e){
-    if(e.key==='Escape'){ closeBoost(); closePublish(); }
+      prev.appendChild(wrap);
+    };
+    reader.readAsDataURL(f);
   });
+}
+
+async function uploadPhotos(files){
+  var urls = [];
+  try {
+    for(var i=0;i<files.length;i++){
+      var f = files[i];
+      var ext = f.name.split('.').pop() || 'jpg';
+      var path = 'ad-'+Date.now()+'-'+i+'.'+ext;
+      var {data,error} = await sb.storage.from('photos').upload(path, f, {cacheControl:'3600',upsert:false});
+      if(!error && data){
+        var {data:pub} = sb.storage.from('photos').getPublicUrl(path);
+        if(pub && pub.publicUrl) urls.push(pub.publicUrl);
+      }
+    }
+  } catch(e){ console.error('Photo upload error:', e); }
+  return urls;
+}
+
+// ── BUILD CARD ──
+function buildCard(a){
+  var isBoost = a.boost && a.boost !== 'gratuit';
+  var em = emoji(a.categorie);
+  var prix = a.prix ? parseInt(a.prix).toLocaleString('fr')+' DJF' : 'Prix à négocier';
+  var badges = '';
+  if(isBoost) badges += '<span class="cbadge boost">Vedette</span>';
+  var photos = a.photos && a.photos.length ? a.photos : [];
+  var imgHtml = photos.length
+    ? '<img src="'+photos[0]+'" alt="'+a.titre+'" loading="lazy" style="width:100%;height:160px;object-fit:cover">'
+    : em;
+  return '<div class="card'+(isBoost?' feat':'')+'" onclick=\'showDetail('+JSON.stringify(JSON.stringify(a))+')\''+'>'
+    +'<div class="card-img">'+imgHtml+'<div class="card-badges">'+badges+'</div></div>'
+    +'<div class="card-body">'
+    +'<div class="card-price">'+prix+'</div>'
+    +'<div class="card-title">'+a.titre+'</div>'
+    +'<div class="card-meta">📍 '+a.ville+' · '+a.categorie+'</div>'
+    +'<div class="card-foot"><span class="card-time">'+ago(a.created_at)+'</span>'
+    +'<button class="fav-btn" onclick="event.stopPropagation();fav(this)">🤍</button>'
+    +'</div></div></div>';
+}
+
+// ── LOAD ADS ──
+var curCat='', curSearch='';
+async function loadAds(){
+  document.getElementById('featGrid').innerHTML='<div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
+  document.getElementById('recentGrid').innerHTML='<div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
+  try{
+    var q = sb.from('annonces').select('*').eq('statut','approuve').order('created_at',{ascending:false});
+    if(curCat) q=q.eq('categorie',curCat);
+    var ville=document.getElementById('villeFilter').value;
+    if(ville) q=q.eq('ville',ville);
+    var {data,error}=await q;
+    if(error)throw error;
+    var all=data||[];
+    if(curSearch){var s=curSearch.toLowerCase();all=all.filter(function(a){return(a.titre||'').toLowerCase().includes(s)||(a.description||'').toLowerCase().includes(s);});}
+    var pmin=parseInt(document.getElementById('pmin').value)||0;
+    var pmax=parseInt(document.getElementById('pmax').value)||Infinity;
+    if(pmin||pmax<Infinity) all=all.filter(function(a){var p=parseInt(a.prix)||0;return p>=pmin&&p<=pmax;});
+    var feat=all.filter(function(a){return a.boost&&a.boost!=='gratuit';});
+    var recent=all.filter(function(a){return!a.boost||a.boost==='gratuit';});
+    // feat
+    if(!feat.length){
+      document.getElementById('featGrid').innerHTML='<div class="empty"><div class="empty-icon">⭐</div><p>Aucune annonce en vedette.<br>Soyez le premier à vous démarquer !</p></div>';
+    } else {
+      document.getElementById('featGrid').innerHTML='<div class="grid">'+feat.map(buildCard).join('')+'</div>';
+    }
+    // recent
+    if(!recent.length&&!feat.length){
+      document.getElementById('recentGrid').innerHTML='<div class="empty"><div class="empty-icon">📭</div><p>Aucune annonce pour le moment.<br>Soyez le premier à publier !</p></div>';
+    } else if(!recent.length){
+      document.getElementById('recentGrid').innerHTML='<div class="empty"><div class="empty-icon">📭</div><p>Aucune annonce dans cette catégorie.</p></div>';
+    } else {
+      document.getElementById('recentGrid').innerHTML='<div class="grid">'+recent.map(buildCard).join('')+'</div>';
+    }
+    // stats
+    var t=all.length.toString();
+    ['s-total','bb-total'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=t;});
+    // counts sidebar
+    var cm={v:'Véhicules',i:'Immobilier',e:'Électronique',m:'Mode',h:'Maison',j:'Emploi',s:'Services',a:'Animaux',al:'Alimentation',sp:'Sport'};
+    for(var k in cm){var n=all.filter(function(a){return a.categorie&&a.categorie.includes(cm[k]);}).length;var el=document.getElementById('cn-'+k);if(el)el.textContent=n;}
+  }catch(err){
+    document.getElementById('featGrid').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><p>Erreur de chargement.</p></div>';
+    document.getElementById('recentGrid').innerHTML='';
+    console.error(err);
+  }
+}
+
+// ── DETAIL ──
+function showDetail(raw){
+  var a=JSON.parse(raw);
+  // images
+  var imgs=document.getElementById('dImgs');
+  imgs.innerHTML='';
+  var photos=a.photos&&a.photos.length?a.photos:[];
+  if(photos.length){
+    photos.forEach(function(url){
+      var img=document.createElement('img');
+      img.src=url;img.className='detail-img-item';img.style.minWidth='100%';
+      imgs.appendChild(img);
+    });
+  } else {
+    var d=document.createElement('div');
+    d.className='detail-img-item';d.textContent=emoji(a.categorie);
+    imgs.appendChild(d);
+  }
+  document.getElementById('dPrice').textContent=a.prix?parseInt(a.prix).toLocaleString('fr')+' DJF':'Prix à négocier';
+  document.getElementById('dTitle').textContent=a.titre;
+  document.getElementById('dChips').innerHTML='<span class="chip">📍 '+a.ville+'</span><span class="chip">'+a.categorie+'</span><span class="chip">'+ago(a.created_at)+'</span>';
+  document.getElementById('dDesc').textContent=a.description||'';
+  var phone=(a.telephone||WA).replace(/\D/g,'');
+  var msg='Bonjour, je suis intéressé(e) par votre annonce sur Suuq.DJ : "'+a.titre+'"';
+  document.getElementById('dWaBtn').onclick=function(){window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');};
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('open');}
+
+// ── SUBMIT ──
+var curBoost='gratuit', curBoostLabel='Sans mise en avant', curBoostPrice='0';
+function selBoost(id,label,price){
+  document.querySelectorAll('.bopt').forEach(function(o){o.classList.remove('sel');});
+  document.getElementById(id).classList.add('sel');
+  curBoost=label==='Sans mise en avant'?'gratuit':label;
+  curBoostLabel=label; curBoostPrice=price;
+  var btn=document.getElementById('submitBtn');
+  if(id==='b0'){btn.textContent='Publier l\'annonce';btn.style.background='var(--green)';}
+  else{btn.textContent='Publier + Confirmer la mise en avant';btn.style.background='var(--wa)';}
+}
+
+async function submitAd(){
+  var title=document.getElementById('aTitle').value.trim();
+  var cat=document.getElementById('aCat').value;
+  var city=document.getElementById('aCity').value;
+  var desc=document.getElementById('aDesc').value.trim();
+  var phone=document.getElementById('aPhone').value.trim();
+  var price=document.getElementById('aPrice').value.trim();
+  if(!title){showToast('Entrez un titre');return;}
+  if(!cat){showToast('Choisissez une catégorie');return;}
+  if(!city){showToast('Choisissez votre ville');return;}
+  if(!desc){showToast('Ajoutez une description');return;}
+  if(!phone){showToast('Entrez votre numéro WhatsApp');return;}
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Publication...';
+  try{
+    // upload photos
+    var photoUrls=[];
+    if(uploadedPhotos.length){
+      try{ photoUrls=await uploadPhotos(uploadedPhotos); }
+      catch(e){ console.error('photo upload failed, continuing without photos'); }
+    }
+    var {error}=await sb.from('annonces').insert([{
+      titre:title,categorie:cat,ville:city,
+      prix:price||null,description:desc,telephone:phone,
+      boost:curBoost,statut:'approuve',
+      photos:photoUrls.length?photoUrls:null
+    }]);
+    if(error)throw error;
+    closePublish();
+    if(curBoost!=='gratuit'){
+      var msg='🆕 *NOUVELLE ANNONCE SUUQ.DJ*\n\n📌 *Titre :* '+title+'\n📂 *Catégorie :* '+cat+'\n📍 *Ville :* '+city+'\n💰 *Prix :* '+(price?parseInt(price).toLocaleString('fr')+' DJF':'À négocier')+'\n📝 *Description :* '+desc+'\n📞 *Contact :* '+phone+'\n\n🚀 *Mise en avant :* '+curBoostLabel+' — '+curBoostPrice+' DJF\n\nMerci de confirmer le paiement !';
+      window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
+    }
+    showToast('✅ Annonce publiée !');
+    loadAds();
+    ['aTitle','aDesc','aPhone','aPrice'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('aCat').value='';document.getElementById('aCity').value='';
+    document.getElementById('photoPreviews').innerHTML='';uploadedPhotos=[];
+    selBoost('b0','Sans mise en avant','0');
+  }catch(e){showToast('Erreur : '+e.message);console.error(e);}
+  finally{btn.disabled=false;}
+}
+
+// ── BOOST MODAL ──
+function openBoost(){document.getElementById('boostOverlay').classList.add('open');}
+function closeBoost(){document.getElementById('boostOverlay').classList.remove('open');}
+function selPlan(id){document.querySelectorAll('.plan').forEach(function(p){p.classList.remove('sel');});document.getElementById(id).classList.add('sel');}
+function payWA(){
+  var sel=document.querySelector('.plan.sel');
+  var msg='Bonjour ! Je veux mettre mon annonce en avant sur Suuq.DJ.\n\n📦 Option : '+(sel?sel.querySelector('.plan-name').textContent:'')+'\n💰 Montant : '+(sel?sel.querySelector('.plan-price').textContent:'')+'\n\nMerci de me confirmer les modalités de paiement.';
+  closeBoost();window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ── PUBLISH MODAL ──
+function openPublish(){document.getElementById('publishOverlay').classList.add('open');}
+function closePublish(){document.getElementById('publishOverlay').classList.remove('open');}
+
+// ── FILTERS ──
+function navCat(el,cat){
+  document.querySelectorAll('.nav-cat').forEach(function(n){n.classList.remove('active');});
+  if(el)el.classList.add('active');
+  curCat=cat;loadAds();
+}
+function sideFilter(cat){curCat=cat;loadAds();}
+function pillFilter(el,cat){
+  document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');curCat=cat;loadAds();
+}
+function doSearch(){curSearch=document.getElementById('searchInput').value.trim();loadAds();}
+function resetAll(){curCat='';curSearch='';document.getElementById('searchInput').value='';loadAds();}
+
+// ── WA ──
+function openWA(msg){window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');}
+
+// ── FAV ──
+function fav(btn){btn.textContent=btn.textContent==='❤️'?'🤍':'❤️';}
+
+// ── TOAST ──
+var tt;
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(tt);tt=setTimeout(function(){t.style.display='none';},3200);}
+
+// ── LIVE VISITORS ──
+var vis=1847;
+setInterval(function(){
+  vis+=Math.floor(Math.random()*5)-2;
+  if(vis<1700)vis=1700;if(vis>2200)vis=2200;
+  ['s-vis','bb-vis'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=vis.toLocaleString('fr');});
+},4000);
+
+// ── CLOSE OVERLAYS ──
+['boostOverlay','publishOverlay','detailOverlay'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')['boostOverlay','publishOverlay','detailOverlay'].forEach(function(id){document.getElementById(id).classList.remove('open');});});
+document.getElementById('searchInput').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
+
+// ── INIT ──
+loadAds();
 </script>
 </body>
 </html>
